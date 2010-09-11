@@ -1,0 +1,2 @@
+fabric
+git+git://github.com/kurtiss/fablib.git#egg=fablib

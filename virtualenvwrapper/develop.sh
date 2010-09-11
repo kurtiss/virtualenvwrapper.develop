@@ -121,3 +121,36 @@ undevelop() {
     
     return 0
 }
+
+develop_newproject_cp() {
+    if [ ! -f "$3" ]
+    then
+        eval "$VIRTUALENVWRAPPER_PYTHON -c \"import pkgutil; print pkgutil.get_data('virtualenvwrapper', '$2')\"" | sed -e "s/\${PROJECT}/$1/" > "$3"
+    fi   
+}
+
+newproject() {
+    mkdir -p "$1"
+    mkvirtualenv --no-site-packages "$1"
+    cd "$1"
+    easy_install pip
+    mkdir -p etc/pip
+    mkdir -p etc/fabric
+    mkdir -p "src/$1"
+    mkdir -p "etc/$1"
+    rm -f etc/pip/develop.txt
+
+    develop_newproject_cp "$1" newproject/__init__.py.txt "src/$1/__init__.py"
+    develop_newproject_cp "$1" newproject/version.py.txt "src/$1/version.py"
+    develop_newproject_cp "$1" newproject/gitignore.txt ".gitignore"
+    develop_newproject_cp "$1" newproject/postactivate.txt "bin/postactivate"
+    develop_newproject_cp "$1" newproject/predeactivate.txt "bin/predeactivate"
+    develop_newproject_cp "$1" newproject/pip_develop.txt "etc/pip/develop.txt"
+    develop_newproject_cp "$1" newproject/fabfile.py.txt "etc/fabric/fabfile.py"
+    develop_newproject_cp "$1" newproject/README.txt "README"
+    develop_newproject_cp "$1" newproject/setup.py.sample.txt "setup.py.sample"
+
+    touch etc/pip/requirements.txt
+
+    pip install -r etc/pip/develop.txt
+}

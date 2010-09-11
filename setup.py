@@ -24,7 +24,18 @@ setup(
     namespace_packages = ['virtualenvwrapper'],
     include_package_data = True,
     package_data = {
-        '' : ['develop.sh']
+        '' : [
+            'develop.sh', 
+            'newproject/__init__.py.txt',
+            'newproject/version.py.txt',
+            'newproject/gitignore.txt',
+            'newproject/postactivate.txt',
+            'newproject/predeactivate.txt',
+            'newproject/README.txt',
+            'newproject/setup.py.sample.txt',
+            'newproject/fabfile.py.txt',
+            'newproject/pip_develop.txt',
+        ]
     },
     scripts = [],
     classifiers = [

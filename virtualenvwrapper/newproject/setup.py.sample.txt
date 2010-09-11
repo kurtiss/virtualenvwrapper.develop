@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+setup.py
+"""
+
+from setuptools import setup, find_packages
+import os
+
+srcpath = "src"
+srcroot = os.path.join(os.path.dirname(__file__), srcpath)
+packages = os.listdir(srcroot)
+
+for package in packages:
+    os.symlink(os.path.join(srcroot, package), package)
+
+execfile(os.path.join('${PROJECT}', 'version.py'))
+
+setup(
+    name = '${PROJECT}',
+    version = VERSION,
+    description = '${PROJECT} does good things.',
+    author = 'Your Name',
+    author_email = 'your@email.com',
+    url = 'http://www.github.com/youruser/yourproject',
+    packages = find_packages(),
+    scripts = [],
+    classifiers = [
+        'Intended Audience :: Developers',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: Python Modules'
+    ],
+    zip_safe = False
+)
+
+for package in packages:
+    os.remove(package)
