@@ -138,7 +138,7 @@ develop_selfupdate() {
 }
 
 develop_testing() {
-    echo "Testing out selfupdate :)"
+    echo "Testing out selfupdate :("
 }
 
 newproject() {
