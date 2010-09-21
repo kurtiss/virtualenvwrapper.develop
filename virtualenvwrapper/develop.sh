@@ -130,7 +130,7 @@ develop_newproject_cp() {
 }
 
 develop_selfupdate() {
-    pip install git+http://github.com/kurtiss/virtualenvwrapper.develop.git\#egg=virtualenvwrapper --upgrade
+    sudo pip install git+http://github.com/kurtiss/virtualenvwrapper.develop.git\#egg=virtualenvwrapper --upgrade
 }
 
 newproject() {
