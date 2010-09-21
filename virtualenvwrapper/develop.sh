@@ -133,7 +133,7 @@ develop_selfupdate() {
     sudo pip install git+http://github.com/kurtiss/virtualenvwrapper.develop.git\#egg=virtualenvwrapper --upgrade
     if [ -f "~/.profile" ]
     then
-        source ~/.profile
+        eval ~/.profile
     fi
 }
 
