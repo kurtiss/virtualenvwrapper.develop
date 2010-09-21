@@ -125,7 +125,7 @@ undevelop() {
 develop_newproject_cp() {
     if [ ! -f "$3" ]
     then
-        eval "$VIRTUALENVWRAPPER_PYTHON -c \"import pkgutil; print pkgutil.get_data('virtualenvwrapper', '$2')\"" | sed -e "s/\${PROJECT}/$1/" > "$3"
+        eval "$VIRTUALENVWRAPPER_PYTHON -c \"import pkgutil; print pkgutil.get_data('virtualenvwrapper.develop', '$2')\"" | sed -e "s/\${PROJECT}/$1/" > "$3"
     fi
 }
 
