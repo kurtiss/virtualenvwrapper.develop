@@ -15,7 +15,7 @@ import os
 
 setup(
     name = 'virtualenvwrapper.develop',
-    version = '0.1',
+    version = '0.2',
     description = 'Developer extensions to virtualenvwrapper.',
     author = 'Kurtiss Hare',
     author_email = 'kurtiss@gmail.com',
