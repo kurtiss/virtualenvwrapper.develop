@@ -7,8 +7,7 @@ setup.py
 from setuptools import setup, find_packages
 import os
 
-os.chdir('src')
-execfile(os.path.join('${PROJECT}', 'version.py'))
+execfile(os.path.join('src', '${PROJECT}', 'version.py'))
 
 setup(
     name = '${PROJECT}',
@@ -17,7 +16,8 @@ setup(
     author = 'Your Name',
     author_email = 'your@email.com',
     url = 'http://www.github.com/youruser/yourproject',
-    packages = find_packages(),
+    packages = find_packages('src'),
+    package_dir = {'':'src'}
     scripts = [],
     classifiers = [
         'Intended Audience :: Developers',
