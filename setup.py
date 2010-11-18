@@ -33,7 +33,6 @@ setup(
             'newproject/predeactivate.txt',
             'newproject/README.txt',
             'newproject/setup.py.sample.txt',
-            'newproject/fabfile.py.txt',
             'newproject/pip_develop.txt',
         ]
     },

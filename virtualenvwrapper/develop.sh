@@ -151,7 +151,6 @@ newproject() {
     develop_newproject_cp "$1" newproject/postactivate.txt "bin/postactivate"
     develop_newproject_cp "$1" newproject/predeactivate.txt "bin/predeactivate"
     develop_newproject_cp "$1" newproject/pip_develop.txt "etc/pip/develop.txt"
-    develop_newproject_cp "$1" newproject/fabfile.py.txt "etc/fabric/fabfile.py"
     develop_newproject_cp "$1" newproject/README.txt "README"
     develop_newproject_cp "$1" newproject/setup.py.sample.txt "setup.py.sample"
 
