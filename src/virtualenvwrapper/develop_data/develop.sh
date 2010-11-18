@@ -125,7 +125,7 @@ undevelop() {
 develop_newproject_cp() {
     if [ ! -f "$3" ]
     then
-        eval "$VIRTUALENVWRAPPER_PYTHON -c \"import pkgutil; print pkgutil.get_data('virtualenvwrapper.develop', '$2')\"" | sed -e "s/\${PROJECT}/$1/" > "$3"
+        eval "$VIRTUALENVWRAPPER_PYTHON -c \"import pkgutil; print pkgutil.get_data('virtualenvwrapper.develop', 'develop_newproject_data/$2')\"" | sed -e "s/\${PROJECT}/$1/" > "$3"
     fi
 }
 
@@ -145,15 +145,13 @@ newproject() {
     mkdir -p "etc/$1"
     rm -f etc/pip/develop.txt
 
-    develop_newproject_cp "$1" newproject/__init__.py.txt "src/$1/__init__.py"
-    develop_newproject_cp "$1" newproject/version.py.txt "src/$1/version.py"
-    develop_newproject_cp "$1" newproject/gitignore.txt ".gitignore"
-    develop_newproject_cp "$1" newproject/postactivate.txt "bin/postactivate"
-    develop_newproject_cp "$1" newproject/predeactivate.txt "bin/predeactivate"
-    develop_newproject_cp "$1" newproject/pip_develop.txt "etc/pip/develop.txt"
-    develop_newproject_cp "$1" newproject/README.txt "README"
-    develop_newproject_cp "$1" newproject/setup.py.sample.txt "setup.py.sample"
+    develop_newproject_cp "$1" __init__.py.txt "src/$1/__init__.py"
+    develop_newproject_cp "$1" version.py.txt "src/$1/version.py"
+    develop_newproject_cp "$1" gitignore.txt ".gitignore"
+    develop_newproject_cp "$1" README.txt "README"
+    develop_newproject_cp "$1" setup.py.sample.txt "setup.py.sample"
 
+    touch etc/pip/develop.txt
     touch etc/pip/requirements.txt
 
     pip install -r etc/pip/develop.txt

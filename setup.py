@@ -13,9 +13,9 @@ distribute_setup.use_setuptools()
 from setuptools import setup, find_packages
 import os
 
-execfile(os.path.join('src', 'virtualenvwrapper', 'develop', 'version.py'))
-
-
+with open("src/virtualenvwrapper/develop_data/VERSION") as version_file:
+    VERSION = version_file.read()
+    
 setup(
     name = 'virtualenvwrapper.develop',
     version = VERSION,
@@ -29,15 +29,8 @@ setup(
     package_dir = {'':'src'},
     package_data = {
         '' : [
-            'develop.sh', 
-            'newproject/__init__.py.txt',
-            'newproject/version.py.txt',
-            'newproject/gitignore.txt',
-            'newproject/postactivate.txt',
-            'newproject/predeactivate.txt',
-            'newproject/README.txt',
-            'newproject/setup.py.sample.txt',
-            'newproject/pip_develop.txt',
+            'develop_data/*',
+            'develop_newproject_data/*'
         ]
     },
     scripts = [],

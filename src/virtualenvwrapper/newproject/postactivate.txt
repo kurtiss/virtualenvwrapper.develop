@@ -1,4 +1,0 @@
-#!/bin/bash
-# This hook is run after this virtualenv is activated.
-
-alias fab="$(which python) -B $(which fab) -f $VIRTUAL_ENV/etc/fabric/fabfile.py"
