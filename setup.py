@@ -13,16 +13,20 @@ distribute_setup.use_setuptools()
 from setuptools import setup, find_packages
 import os
 
+execfile(os.path.join('src', 'virtualenvwrapper', 'develop', 'version.py'))
+
+
 setup(
     name = 'virtualenvwrapper.develop',
-    version = '0.2',
+    version = VERSION,
     description = 'Developer extensions to virtualenvwrapper.',
     author = 'Kurtiss Hare',
     author_email = 'kurtiss@gmail.com',
     url = 'http://www.github.com/kurtiss/virtualenvwrapper.develop',
-    packages = find_packages(),
+    packages = find_packages('src'),
     namespace_packages = ['virtualenvwrapper'],
     include_package_data = True,
+    package_dir = {'':'src'},
     package_data = {
         '' : [
             'develop.sh', 

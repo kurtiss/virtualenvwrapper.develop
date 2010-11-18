@@ -15,6 +15,7 @@
 
 #buildout/virtualenv cruft
 bin/*
+build/*
 lib
 include
 share
