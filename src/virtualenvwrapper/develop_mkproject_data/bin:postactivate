@@ -1,0 +1,68 @@
+#!/usr/bin/env __UNSOURCED=1 /bin/bash
+# This hook is run after this virtualenv is activated.
+
+# setup
+__postactivate_update_virtualenv() {
+    local PATH_EXTENSIONS="$(virtualenvwrapper_get_site_packages_dir)/virtualenv_path_extensions.pth"    
+    touch "$PATH_EXTENSIONS"
+
+    grep "^$VIRTUAL_ENV/src$" "$PATH_EXTENSIONS" >/dev/null
+
+    if [ "$?" -gt "0" ]; then
+        add2virtualenv $VIRTUAL_ENV/src
+    fi
+}
+
+__postactivate_usage() {
+    local CMDNAME="$1"
+    cat <<EOF
+Usage: source $CMDNAME [-h]
+Source this file to run all virtualenv postactivation hooks.
+
+Options:
+EOF
+
+    cat <<EOF | column -s\& -t
+-h & Display this help and exit.
+EOF
+}
+
+__postactivate() {
+    local CMDNAME="postactivate"
+    local USAGE="__postactivate_usage $CMDNAME"
+
+    __develop_ensure_sourced "${__UNSOURCED}" "${USAGE}"
+    virtualenvwrapper_verify_workon_home || return 1
+    virtualenvwrapper_verify_active_environment || return 1
+
+    local SET_PARAMS=`getopt h $* 2>/dev/null`
+    eval set -- "$SET_PARAMS"
+
+    while true; do
+        case "$1" in
+            -h)
+                eval $USAGE
+                return 0
+            ;;
+            --)
+                shift
+                break
+            ;;
+        esac
+        shift
+    done
+
+    __postactivate_update_virtualenv $CMDNAME
+    TESTSUITE_MODULE="${PROJECT}_testsuite"
+    . $VIRTUAL_ENV/bin/postactivate.cowork
+
+    return 0
+}
+
+# execute
+eval __postactivate $*
+
+# teardown
+unset __postactivate_update_virtualenv
+unset __postactivate_usage
+unset __postactivate

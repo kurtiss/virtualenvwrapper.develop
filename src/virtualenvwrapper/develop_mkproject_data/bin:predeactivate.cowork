@@ -1,0 +1,55 @@
+#!/usr/bin/env __UNSOURCED=1 /bin/bash
+
+# setup
+__cowork_usage() {
+    local CMDNAME="$1"
+    cat <<EOF
+Usage: source $CMDNAME
+Source this file to remove cowork commands from your environment.
+EOF
+
+    cat <<EOF | column -s\& -t
+-h & Display this help and exit.
+EOF
+}
+
+__cowork_predeactivate() {
+    local CMDNAME="predeactivate.cowork"
+    local USAGE="__cowork_usage $CMDNAME"
+
+    __develop_ensure_sourced "${__UNSOURCED}" "$USAGE"
+    virtualenvwrapper_verify_workon_home || return 1
+    virtualenvwrapper_verify_active_environment || return 1
+
+    local SET_PARAMS=`getopt h $* 2>/dev/null`
+    eval set -- "$SET_PARAMS"
+
+    while true; do
+        case "$1" in
+            -h)
+                eval $USAGE
+                return 0
+            ;;
+            --)
+                shift
+                break
+            ;;
+        esac
+        shift
+    done
+
+    unset __cowork_ensure_devfile
+    unset __addwork_usage
+    unset addwork
+    unset __rmwork_usage
+    unset rmwork
+    unset __lswork_usage
+    unset lswork
+}
+
+# execute
+eval __cowork_predeactivate $*
+
+# tear-down
+unset __cowork_usage
+unset __cowork_predeactivate

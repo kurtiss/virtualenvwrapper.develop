@@ -1,0 +1,53 @@
+#!/usr/bin/env __UNSOURCED=1 /bin/bash
+# This hook is run before this virtualenv is deactivated.
+
+# setup
+__predeactivate_usage() {
+    local CMDNAME="$1"
+    cat <<EOF
+Usage: source $CMDNAME [-h]
+Source this file to run all virtualenv predeactivation hooks.
+
+Options:
+EOF
+
+    cat <<EOF | column -s\& -t
+-h & Display this help and exit.
+EOF
+}
+
+__predeactivate() {
+    local CMDNAME="predeactivate"
+    local USAGE="__predeactivate_usage $CMDNAME"
+
+    __develop_ensure_sourced "${__UNSOURCED}" "${USAGE}"
+    virtualenvwrapper_verify_workon_home || return 1
+    virtualenvwrapper_verify_active_environment || return 1
+
+    local SET_PARAMS=`getopt h $* 2>/dev/null`
+    eval set -- "$SET_PARAMS"
+
+    while true; do
+        case "$1" in
+            -h)
+                eval $USAGE
+                return 0
+            ;;
+            --)
+                shift
+                break
+            ;;
+        esac
+        shift
+    done
+
+    . $VIRTUAL_ENV/bin/predeactivate.cowork
+    unset TESTSUITE_MODULE
+}
+
+# execute
+eval __predeactivate $*
+
+# teardown
+unset __predeactivate_usage
+unset __predeactivate

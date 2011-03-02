@@ -15,7 +15,7 @@ import os
 
 with open("src/virtualenvwrapper/develop_data/VERSION") as version_file:
     VERSION = version_file.read()
-    
+
 setup(
     name = 'virtualenvwrapper.develop',
     version = VERSION,
@@ -30,7 +30,7 @@ setup(
     package_data = {
         '' : [
             'develop_data/*',
-            'develop_newproject_data/*'
+            'develop_mkproject_data/*'
         ]
     },
     scripts = [],

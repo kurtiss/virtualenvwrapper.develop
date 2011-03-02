@@ -1,0 +1,19 @@
+v0.4.0 - 3/3/2011
+
+* CHANGES file added.
+* newproject command renamed to mkproject.
+* develop_selfupdate renamed to develop-selfupdate.
+* added develop-selfupdate -b BRANCH, allowing one to update to a separate branch.
+* added mkproject -o, which will overwrite existing files.
+* added mkproject -i, which will install default project dependencies upon creation.
+* projects created with mkproject get:
+  * updated gitignore files
+  * separate testing requirements
+  * updated install script
+  * default integrate script
+  * initial testsuite skeleton
+* almost all commands were given a -h (usage) option.
+* develop was renamed to addwork, quirks fixed.
+* undevelop was renamed to rmwork, quirks fixed.
+* added lswork, which lists the projects in the current working set.
+  

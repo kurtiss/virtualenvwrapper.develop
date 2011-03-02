@@ -1,0 +1,239 @@
+#!/usr/bin/env __UNSOURCED=1 /bin/bash
+
+# set up
+__cowork_usage() {
+    local CMDNAME="$1"
+    cat <<EOF
+Usage: source $CMDNAME
+Source this file to update your environment with cowork commands.
+EOF
+
+    cat <<EOF | column -s\& -t
+-h & Display this help and exit.
+EOF
+}
+
+__cowork_postactivate() {
+    local CMDNAME="postactivate.cowork"
+    local USAGE="__cowork_usage $CMDNAME"
+    
+    __develop_ensure_sourced "${__UNSOURCED}" "${USAGE}"
+    virtualenvwrapper_verify_workon_home || return 1
+    virtualenvwrapper_verify_active_environment || return 1
+
+    local SET_PARAMS=`getopt h $* 2>/dev/null`
+    eval set -- "$SET_PARAMS"
+
+    while true; do
+        case "$1" in
+            -h)
+                eval $USAGE
+                return 0
+            ;;
+            --)
+                shift
+                break
+            ;;
+        esac
+        shift
+    done
+    
+    __cowork_ensure_devfile() {
+        local PROJECT_NAME=$(python -c "import os; print os.path.basename(\"$VIRTUAL_ENV\")")
+        local PARENT_CFG_PATH="$VIRTUAL_ENV/etc/$PROJECT_NAME/virtualenvwrapper.develop"
+        local PARENT_DEVELOP_FILE="$PARENT_CFG_PATH/environments.txt"
+
+        mkdir -p $PARENT_CFG_PATH
+        touch $PARENT_DEVELOP_FILE   
+
+        echo $PARENT_DEVELOP_FILE
+        return 0
+    }
+
+    __addwork_usage() {
+        local CMDNAME="$1"
+        cat <<EOF
+Usage: $CMDNAME [-h] PROJECT [PROJECT...]
+Run this command to add the given projects to the working set for $VIRTUAL_ENV.
+
+Options:
+EOF
+
+    cat <<EOF | column -s\& -t
+-h & Display this help and exit.
+EOF
+    }
+
+    addwork() {
+        __develop_verify_current_environment || return 1
+
+        local CMDNAME="addwork"
+        local USAGE="__addwork_usage $CMDNAME"
+        local DEVELOP_FILE=$(__cowork_ensure_devfile)
+        local CURRENT_DIR="`pwd`"
+        local SET_PARAMS=`getopt h $* 2>/dev/null`
+        local CANDIDATE
+        eval set -- "$SET_PARAMS"
+
+        while true; do
+            case "$1" in
+                -h)
+                    eval $USAGE
+                    return 0
+                ;;
+                --)
+                    shift
+                    break
+                ;;
+            esac
+            shift
+        done
+
+        if [ "$*" = "" ]
+        then
+            eval $USAGE
+            return 1
+        fi
+
+        for CANDIDATE in "$@"
+        do
+            grep "^$CANDIDATE$" "$DEVELOP_FILE" >/dev/null
+            if [ "$?" -gt "0" ]; then
+                if [ -e "$WORKON_HOME/$CANDIDATE" ]; then
+                    echo "Adding $CANDIDATE to the working set for $VIRTUAL_ENV..."
+                    cd "$WORKON_HOME/$CANDIDATE"
+
+                    python setup.py develop
+                    echo "$CANDIDATE" >> $DEVELOP_FILE
+                else
+                    echo "No such project: $WORKON_HOME/$CANDIDATE"
+                    return 1
+                fi
+            else
+                echo "$CANDIDATE is already under development."            
+            fi
+        done
+
+        cd $CURRENT_DIR
+        return 0
+    }
+    
+    __rmwork_usage() {
+        local CMDNAME="$1"
+        cat <<EOF
+Usage: $CMDNAME [-h] PROJECT [PROJECT...]
+Run this command to remove the given projects from the working set for $VIRTUAL_ENV.
+
+Options:
+EOF
+
+    cat <<EOF | column -s\& -t
+-h & Display this help and exit.
+EOF
+    }
+
+    rmwork() {
+        __develop_verify_current_environment || return 1
+
+        local CMDNAME="rmwork"
+        local USAGE="__rmwork_usage $CMDNAME"
+        local DEVELOP_FILE=$(__cowork_ensure_devfile)
+        local CURRENT_DIR="`pwd`"
+        local SITE_PACKAGES_DIR="$(virtualenvwrapper_get_site_packages_dir)"
+        local EASY_INSTALL_FILE="${SITE_PACKAGES_DIR}/easy-install.pth"
+        local SET_PARAMS=`getopt h $* 2>/dev/null`
+        local CANDIDATE
+        eval set -- "$SET_PARAMS"
+
+        while true; do
+            case "$1" in
+                -h)
+                    eval $USAGE
+                    return 0
+                ;;
+                --)
+                    shift
+                    break
+                ;;
+            esac
+            shift
+        done
+
+        if [ "$*" = "" ]
+        then
+            eval "$USAGE"
+            return 1
+        fi
+
+        for CANDIDATE in "$@"; do
+            local PROJECT_LINK="${SITE_PACKAGES_DIR}/${CANDIDATE}.egg-link"
+            grep "^$CANDIDATE$" "$DEVELOP_FILE" >/dev/null
+
+            if [ "$?" -gt "0" ]; then
+                echo "$CANDIDATE is not in the working set for $VIRTUAL_ENV."
+                return 1
+            else
+                echo "Removing $CANDIDATE from the working set for $VIRTUAL_ENV..."
+                local MODPATH=$(head -n1 "$PROJECT_LINK")
+                rm "$PROJECT_LINK"
+            
+                MODPATH_ESCAPED=$(echo "$MODPATH" | sed -e 's/\(\.\|\/\|\*\|\[\|\]\|\\\)/\\&/g')
+                sed -i "/^$MODPATH_ESCAPED$/d" "$EASY_INSTALL_FILE"
+
+                CANDIDATE_ESCAPED=$(echo "$CANDIDATE" | sed -e 's/\(\.\|\/\|\*\|\[\|\]\|\\\)/\\&/g')  
+                sed -i "/^$CANDIDATE_ESCAPED$/d" "$DEVELOP_FILE"
+            fi        
+        done
+
+        cd $CURRENT_DIR
+        return 0
+    }
+    
+    __lswork_usage() {
+        local CMDNAME="$1"
+        cat <<EOF
+Usage: $CMDNAME [-h] PROJECT [PROJECT...]
+List the projects in the working set for $VIRTUAL_ENV.
+
+Options:
+EOF
+
+    cat <<EOF | column -s\& -t
+-h & Display this help and exit.
+EOF
+    }
+
+    lswork() {
+        __develop_verify_current_environment || return 1
+
+        local CMDNAME="lswork"
+        local USAGE="__lswork_usage $CMDNAME"
+        local DEVELOP_FILE=$(__cowork_ensure_devfile)
+        local SET_PARAMS=`getopt h $* 2>/dev/null`
+        eval set -- "$SET_PARAMS"
+
+        while true; do
+            case "$1" in
+                -h)
+                    eval $USAGE
+                    return 0
+                ;;
+                --)
+                    shift
+                    break
+                ;;
+            esac
+            shift
+        done
+        
+        cat "$DEVELOP_FILE"
+        return 0
+    }
+}
+
+# execute
+eval __cowork_postactivate $*
+
+# tear-down
+unset __cowork_usage
+unset __cowork_postactivate

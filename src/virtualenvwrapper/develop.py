@@ -13,4 +13,13 @@ __version__ = pkg_resources.resource_string(__name__, 'develop_data/VERSION')
 
 
 def initialize_source(args):
-    return pkg_resources.resource_string(__name__, 'develop_data/develop.sh')
+    sources = [
+        "base.sh",
+        "develop.sh",
+        "gittools.sh",
+        "mkproject.sh"
+    ]
+    
+    return "\n".join(
+        pkg_resources.resource_string(__name__, 'develop_data/{0}'.format(s)) for s in sources
+    )

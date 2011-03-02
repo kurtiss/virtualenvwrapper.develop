@@ -33,8 +33,10 @@ pip-log.txt
 *.pyc
 
 # test cruft
-*_test
 .coverage
+nosetests.xml # nosexunit
+man/* # nosexunit
+target/* # nosexunit
 
 # Sphinx cruft
 _build
@@ -46,6 +48,11 @@ _build
 *.log
 *.pid
 
+# virtualenvwrapper.develop stuff
+etc/${PROJECT}/virtualenvwrapper.develop/environments.txt
+
 # project-specific overrides
+!bin/install
+!bin/integrate
 !bin/postactivate
 !bin/predeactivate
