@@ -55,4 +55,6 @@ etc/${PROJECT}/virtualenvwrapper.develop/environments.txt
 !bin/install
 !bin/integrate
 !bin/postactivate
+!bin/postactivate.cowork
 !bin/predeactivate
+!bin/predeactivate.cowork
