@@ -37,44 +37,28 @@ mkproject() {
     virtualenvwrapper_verify_workon_home || return 1
 
     local CMDNAME="mkproject"
-    local PROJECT_NAME="$1"
-    local PROJECT_DIR="$WORKON_HOME/$PROJECT_NAME"
     local USAGE="__mkproject_usage $CMDNAME"
-    local RENDER="__mkproject_render $PROJECT_NAME"
-    local RENDER_UPDATE="__mkproject_render_update $PROJECT_NAME"
-    local INSTALL_PROJECT="0"
-    
-    # PROJECT_NAME unspecified
-    shift
-    if [ "$?" -gt "0" ]; then
-        eval $USAGE
-        return 1
-    fi
+    local INSTALL_PROJECT=""
+    local PROJECT_RENDER_FORCED=""
+    local VIRTUAL_ENV_RENDER_FORCED=""
 
-    SET_PARAMS=$(getopt oih $*)
+    local SET_PARAMS=$(getopt oih $*)
     if [ "$?" -gt "0" ]; then
         eval $USAGE
         return 1
     fi
 
     eval set -- $SET_PARAMS
-
-    local RENDER_PROJECT_FILE="$RENDER_UPDATE"
-    if [ -f "$PROJECT_DIR" ]; then
-        local RENDER_VIRTUALENV_FILE="$RENDER_UPDATE"
-    else
-        local RENDER_VIRTUALENV_FILE="$RENDER"
-    fi
-
+    
     while true; do
         case "$1" in
             -h)
                 eval $USAGE
                 return 0
             ;;
-            -o) 
-                RENDER_PROJECT_FILE="$RENDER"
-                RENDER_VIRTUALENV_FILE="$RENDER"
+            -o)
+                PROJECT_RENDER_FORCED="1"
+                VIRTUAL_ENV_RENDER_FORCED="1"
             ;;
             -i)
                 INSTALL_PROJECT="1"
@@ -82,7 +66,29 @@ mkproject() {
             --) shift; break ;;
         esac
         shift
-    done
+    done    
+
+    local PROJECT_NAME="$1"
+    local PROJECT_DIR="$WORKON_HOME/$PROJECT_NAME"
+
+    # PROJECT_NAME unspecified
+    shift
+    if [ "$?" -gt "0" ]; then
+        eval $USAGE
+        return 1
+    fi
+
+    if [ ! -f "$PROJECT_DIR" ] || [ "$VIRTUAL_ENV_RENDER_FORCED" ]; then
+        RENDER_VIRTUALENV_FILE="__mkproject_render $PROJECT_NAME"
+    else
+        RENDER_VIRTUALENV_FILE="__mkproject_render_update $PROJECT_NAME"
+    fi
+    
+    if [ "$PROJECT_RENDER_FORCED" ]; then
+        RENDER_PROJECT_FILE="__mkproject_render $PROJECT_NAME"
+    else
+        RENDER_PROJECT_FILE="__mkproject_render_update $PROJECT_NAME"
+    fi
 
     # create initial virtual env
     mkvirtualenv --no-site-packages "$PROJECT_NAME"
@@ -129,7 +135,7 @@ mkproject() {
     workon "$PROJECT_NAME"
     cdvirtualenv
 
-    if [ "$INSTALL_PROJECT" -gt "0" ]; then
+    if [ "$INSTALL_PROJECT" ]; then
         . "bin/install" -tu        
     fi
 
