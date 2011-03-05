@@ -1,4 +1,4 @@
-__develop_verify_current_environment() {
+develop-verify-current-environment() {
     virtualenvwrapper_verify_workon_home || return 1
     virtualenvwrapper_verify_active_environment || return 1
     site_packages="`virtualenvwrapper_get_site_packages_dir`"
@@ -12,7 +12,7 @@ __develop_verify_current_environment() {
     return 0
 }
 
-__develop_ensure_sourced() {
+develop-ensure-sourced() {
     if [ "$1" ]; then
         eval $2
         exit 1
@@ -68,4 +68,11 @@ EOF
     source virtualenvwrapper.sh
 
     return 0
+}
+
+develop-teardown() {
+    unset develop-verify-current-environment
+    unset develop-ensure-sourced
+    unset develop-selfupdate
+    unset develop-teardown
 }

@@ -20,7 +20,7 @@ EOF
 __install() {
     local CMDNAME="install"
     local USAGE="__install_usage $CMDNAME"
-    __develop_ensure_sourced "${__UNSOURCED}" "${USAGE}"
+    develop-ensure-sourced "${__UNSOURCED}" "${USAGE}"
     
     local SET_PARAMS=`getopt tuh $* 2>/dev/null`
     eval set -- "$SET_PARAMS"

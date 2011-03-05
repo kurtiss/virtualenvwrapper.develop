@@ -31,7 +31,7 @@ __postactivate() {
     local CMDNAME="postactivate"
     local USAGE="__postactivate_usage $CMDNAME"
 
-    __develop_ensure_sourced "${__UNSOURCED}" "${USAGE}"
+    develop-ensure-sourced "${__UNSOURCED}" "${USAGE}"
     virtualenvwrapper_verify_workon_home || return 1
     virtualenvwrapper_verify_active_environment || return 1
 
